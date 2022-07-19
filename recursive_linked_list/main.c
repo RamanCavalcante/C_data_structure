@@ -1,40 +1,88 @@
 #include <stdio.h>
 #include <stdlib.h>
-typedef struct point Point;
-Point *head;
 
-struct point{
-    int data;
-    struct point *next;
+struct ponto
+{
+	float x;
+	float y;
+	struct ponto *prox;
 };
 
-void addLast(int element){
-  Point *point = (Point*) malloc(sizeof(Point));
-  point->data = element;
-  point->next = NULL;
-  if(head==NULL){
-    head = point;
+typedef struct ponto Ponto;
+
+Ponto *listaPontos; // aponta para o início da lista
+
+int length = 0;
+
+void addIndex(float x, float y, int index){
+	Ponto *p = (Ponto*) malloc(sizeof(Ponto));
+	p->x = x;
+	p->y = y;
+
+	if(index>length)
+	{
+		printf("Posição Inválida.");
+	}else{
+		if(index==0){
+			p->prox = listaPontos;
+			listaPontos = p;
+		}else{
+			Ponto *listaAux = listaPontos;
+			int i=0;
+			while(i!=index-1){
+				listaAux = listaAux->prox;
+				i++;
+			}
+			p->prox = listaAux->prox;
+			listaAux->prox = p;
+		}
+		length++;
+	}
+
+}
+
+void removeIndex(int index){
+  if(index > length || length == 0){
+    printf("Posição inválida ou Lista Vazia");
   }else{
-    Point *current = head;
-    while(current->next!=NULL){
-      current = current->next;
+    if(index == 0){
+      listaPontos = listaPontos->prox;
+    }else{
+      Ponto *listaAux = listaPontos;
+      int i = 0;
+      while(i!=index-1){
+        listaAux = listaAux->prox;
+        i++;
+      }
+      listaAux->prox = listaAux->prox->prox;
     }
-    current->next = point;
+    length--;
   }
 }
 
+void imprime(Ponto *p){
+	if(p!=NULL){
+		printf("\nPonto(%.1f,%.1f)",p->x,p->y);
+		imprime(p->prox);
+	}
 
-
-void printed(Point *current){
-  if(current!=NULL){
-    printf("[%d]",current->data);
-    imprimi(current->next);
-  }
+  printf("\n");
 }
 
-int main(){
-  add(10);
-  add(11);
+int main() {
 
-  printed(head);
+	printf("teste1");
+	
+	addIndex(1,1,0);
+	addIndex(2,4,1);
+	addIndex(3,9,2);
+  addIndex(10,3,3);
+
+  removeIndex(2);
+
+	Ponto *auxLista = listaPontos;
+
+	imprime(auxLista);
+
+  	return 0;
 }
