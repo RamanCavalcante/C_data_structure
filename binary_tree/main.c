@@ -27,20 +27,80 @@ void printed(Nodo *no){
   }
 }
 
-int main(){
+void add(Nodo *newNodo, int value){
+  if(value < newNodo->value){
+    if(newNodo->left == NULL){
+      newNodo->left = create(value);
+    }else{
+      add(newNodo->left, value);
+    }
+  }else{
+    if(newNodo->right == NULL){
+      newNodo->right =  create(value);
+    }else{
+      add(newNodo->right, value); 
+    }
+  }
+}
 
-  Nodo *no1 = create(10);
-  Nodo *no2 = create(20);
-  Nodo *no3 = create(30);
-  Nodo *no4 = create(40);
-  Nodo *no5 = create(50);
-  Nodo *no6 = create(60);
+void removeTree(Nodo *nodeRemoved, int valueRemoved){
+  Nodo *son = nodeRemoved;
+  Nodo *dad;
 
-  no5->left   = no1;
-  no5->right  = no2;
-  no6->left   = no3;
-  no6->right  = no4;
+  do{
+    dad = son;
+    if(valueRemoved < nodeRemoved->value){
+      son = son->left;
+    }else if(valueRemoved > nodeRemoved->value){
+      son = son->right;
+    }
+  }while(son != NULL && son->value == valueRemoved);
 
-  printed(no6);
+  if(son!= NULL){
+    if(son->left == NULL && son->right ==NULL){//caso não tenha tenha sons
+      if(dad->left  == son) dad->left  = NULL;
+      if(dad->right == son) dad->right = NULL;
+    }
+
+    if(son->left != NULL && son->right == NULL){//caso tenha um son a esquerda
+      if(dad->left  == son) dad->left  = NULL;
+      if(dad->right == son) dad->right = NULL;
+    }
+
+    if(son->left == NULL && son->right != NULL){//caso tenha um son a direita
+      if(dad->left == son) dad->left   = NULL;
+      if(dad->right == son) dad->right = NULL;
+    }
+
+    if(son->left != NULL && son->right != NULL){//caso tenha dois sons
+      if(son->left->right == NULL){
+        son->value = son->left->value;
+      }else{
+        Nodo *p = son->left;
+        Nodo *aux =p;
+        while (p->right != NULL){
+          aux = p;
+          p = p->right;
+        }
+        aux->right = NULL;
+        son->value = p->value;
+        
+      }
+    }
+  }
+}
+
+
+int main(void){
+  Nodo *root = create(70);
+  
+  add(root, 10);
+  add(root, 5);
+  add(root, 11);
+  printed(root);
+
+  removeTree(root, 5);
+  printf("\n");
+  printed(root);
   return 0;
 }
