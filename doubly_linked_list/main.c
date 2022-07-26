@@ -11,17 +11,17 @@ struct nodo
   struct nodo *previous;
 };
 
-void addFirstNodo(int element){
+void addFirstNodo(int value){
   Nodo *no = (Nodo*) malloc(sizeof(Nodo));
 
   if(head == NULL){
-    no->element = element;
+    no->element = value;
     no->next = head;
     no->previous = NULL;
     head = no;
     last = no;
   }else{
-    no->element = element;
+    no->element = value;
     no->next = head;
     head->previous = no;
     no->previous = NULL;
@@ -30,17 +30,17 @@ void addFirstNodo(int element){
 
 }
 
-void addLastNodo(int element){
+void addLastNodo(int value){
   Nodo *no = (Nodo*) malloc(sizeof(Nodo));
 
   if (last == NULL){
-    no->element =  element;
+    no->element =  value;
     no->next = NULL;
     no->previous = last;
     last = no;
     head = no;   
   }else{
-    no->element =  element;
+    no->element =  value;
     no->next = NULL;
     last->next = no;
     no->previous = last;
