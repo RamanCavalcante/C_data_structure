@@ -1,88 +1,115 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-struct ponto
+struct nodo
 {
-	float x;
-	float y;
-	struct ponto *prox;
+	int valor;
+	struct nodo *esq;
+	struct nodo *dir;
 };
 
-typedef struct ponto Ponto;
+typedef struct nodo Nodo;
 
-Ponto *listaPontos; // aponta para o início da lista
+Nodo* create(int valor)
+{
+	Nodo *n = malloc(sizeof(Nodo));
+	n->valor = valor;
+	n->esq = NULL;
+	n->dir = NULL;
+	return n;
+}
 
-int length = 0;
+void imprimir(Nodo *n)
+{
+	if(n==NULL)
+		return;
+	imprimir(n->esq);
+	printf("\n%d",n->valor);
+	imprimir(n->dir);
+}
 
-void addIndex(float x, float y, int index){
-	Ponto *p = (Ponto*) malloc(sizeof(Ponto));
-	p->x = x;
-	p->y = y;
-
-	if(index>length)
+void add(Nodo *n, int valor)
+{
+	if(valor < n->valor)
 	{
-		printf("Posição Inválida.");
-	}else{
-		if(index==0){
-			p->prox = listaPontos;
-			listaPontos = p;
-		}else{
-			Ponto *listaAux = listaPontos;
-			int i=0;
-			while(i!=index-1){
-				listaAux = listaAux->prox;
-				i++;
-			}
-			p->prox = listaAux->prox;
-			listaAux->prox = p;
+		if(n->esq == NULL)
+			n->esq = create(valor);
+		else
+			add(n->esq,valor);
+	}
+	else
+	{
+		if(n->dir == NULL)
+			n->dir = create(valor);
+		else
+			add(n->dir,valor);
+	}
+}
+
+void rem(Nodo *n, int valor)
+{
+	Nodo *filho = n;
+	Nodo *pai;
+	do{
+		pai = filho;
+		if(valor < filho->valor)
+			filho = filho->esq;
+		else if(valor > filho->valor)
+			filho = filho->dir;	
+	}while(filho!=NULL && filho->valor != valor);
+
+	if(filho != NULL){ // nodo com o valor correspondente encontrado
+		if(filho->esq == NULL && filho->dir == NULL){ // nodo folha
+			printf("%d é nodo folha\n",valor);
+			if(pai->esq == filho) pai->esq = NULL;
+			if(pai->dir == filho) pai->dir = NULL;
 		}
-		length++;
+		if(filho->esq != NULL && filho->dir == NULL){ // nodo com 1 filho a esquerda
+			printf("%d tem um filho a esquerda\n",valor);
+			if(pai->esq == filho) pai->esq = filho->esq;
+			if(pai->dir == filho) pai->dir = filho->esq;
+		}
+		if(filho->esq == NULL && filho->dir != NULL){ // nodo com 1 filho a direita
+			printf("%d tem um filho a direita\n",valor);
+			if(pai->esq == filho) pai->esq = filho->dir;
+			if(pai->dir == filho) pai->dir = filho->dir;
+		}
+		if(filho->esq != NULL && filho->dir != NULL) // nodo com 2 filhos
+		{
+			printf("%d tem dois filhos\n",valor);
+			if(filho->esq->dir==NULL){
+				filho->valor = filho->esq->valor;
+				filho->esq = NULL;
+			}else{
+				Nodo *p = filho->esq;
+				Nodo *aux = p;
+				while(p->dir != NULL){
+					aux = p;
+					p = p->dir;
+				}
+				aux->dir = NULL;
+				filho->valor = p->valor;
+			}
+		}
 	}
-
 }
 
-void removeIndex(int index){
-  if(index > length || length == 0){
-    printf("Posição inválida ou Lista Vazia");
-  }else{
-    if(index == 0){
-      listaPontos = listaPontos->prox;
-    }else{
-      Ponto *listaAux = listaPontos;
-      int i = 0;
-      while(i!=index-1){
-        listaAux = listaAux->prox;
-        i++;
-      }
-      listaAux->prox = listaAux->prox->prox;
-    }
-    length--;
-  }
-}
+int main(void) {
 
-void imprime(Ponto *p){
-	if(p!=NULL){
-		printf("\nPonto(%.1f,%.1f)",p->x,p->y);
-		imprime(p->prox);
-	}
+	Nodo *root = create(5);
 
-  printf("\n");
-}
+	add(root,2);
+	add(root,0);
+	add(root,1);
+	add(root,8);
+	add(root,4);
 
-int main() {
+	printf("to aqui\n");
 
-	printf("teste1");
-	
-	addIndex(1,1,0);
-	addIndex(2,4,1);
-	addIndex(3,9,2);
-  addIndex(10,3,3);
+	rem(root,2);
+	rem(root,1);
 
-  removeIndex(2);
-
-	Ponto *auxLista = listaPontos;
-
-	imprime(auxLista);
+	imprimir(root);
 
   	return 0;
 }

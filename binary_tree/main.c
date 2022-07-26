@@ -77,14 +77,13 @@ void removeTree(Nodo *nodeRemoved, int valueRemoved){
         son->value = son->left->value;
       }else{
         Nodo *p = son->left;
-        Nodo *aux =p;
+        Nodo *aux = p;
         while (p->right != NULL){
           aux = p;
           p = p->right;
         }
         aux->right = NULL;
         son->value = p->value;
-        
       }
     }
   }
@@ -92,14 +91,15 @@ void removeTree(Nodo *nodeRemoved, int valueRemoved){
 
 
 int main(void){
-  Nodo *root = create(70);
+  Nodo *root = create(5);
   
-  add(root, 10);
-  add(root, 5);
-  add(root, 11);
-  printed(root);
+  add(root, 2);
+  add(root, 1);
+  add(root, 8);
+  add(root, 4);
 
-  removeTree(root, 5);
+  removeTree(root, 4);
+
   printf("\n");
   printed(root);
   return 0;
